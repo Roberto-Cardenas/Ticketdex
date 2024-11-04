@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Rollodex",
-    "slug": "Rollodex",
+    "name": "Ticketdex",
+    "slug": "Ticketdex",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -10,15 +10,16 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#222B23"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.robertojcardenas.Ticketdex"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#222B23"
       }
     },
     "web": {
@@ -27,10 +28,17 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a97fc822-ab9e-43fc-a309-be2b83f71239"
+      }
+    },
+    "owner": "robertojcardenas"
   }
 }
