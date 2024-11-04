@@ -1,35 +1,48 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Tabs } from "expo-router";
+import Entypo from '@expo/vector-icons/Entypo';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-      }}>
-      <Tabs.Screen
+        tabBarActiveTintColor: '#63de75',
+        tabBarStyle: {
+          backgroundColor: '#191919',
+          borderTopColor: '#191919',
+          minHeight: '10%',
+        },
+        tabBarLabelStyle: {
+          marginBottom: 10
+        },
+      }}
+    >
+      <Tabs.Screen 
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
+          title: "Tickets",
+          tabBarIcon: ({ color }) => (
+            <Entypo name="ticket" size={24} color={color} />
+          )
         }}
       />
-      <Tabs.Screen
-        name="explore"
+      <Tabs.Screen 
+        name="past_events"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
+          title: "Past Events",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="calendar-clock" size={24} color={color} />
+          )
+        }}
+      />
+      <Tabs.Screen 
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color }) => (
+            <Entypo name="cog" size={24} color={color} />
+          )
         }}
       />
     </Tabs>
