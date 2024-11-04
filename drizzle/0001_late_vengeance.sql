@@ -1,0 +1,1 @@
+ALTER TABLE `events_table` DROP COLUMN `email`;

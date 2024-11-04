@@ -1,0 +1,1 @@
+ALTER TABLE `config_table` ADD `autoDeleteEvents` integer DEFAULT false;

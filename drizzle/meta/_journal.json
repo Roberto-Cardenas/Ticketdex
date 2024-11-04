@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1729620937105,
+      "tag": "0000_nebulous_kat_farrell",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1729626382570,
+      "tag": "0001_late_vengeance",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1729890609676,
+      "tag": "0002_futuristic_golden_guardian",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1730166251022,
+      "tag": "0003_low_abomination",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1730506281724,
+      "tag": "0004_vengeful_barracuda",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1730506413225,
+      "tag": "0005_perfect_karma",
+      "breakpoints": true
+    }
+  ]
+}
