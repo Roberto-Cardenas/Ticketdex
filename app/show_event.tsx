@@ -1,5 +1,6 @@
 // Library imports
 import { View, StyleSheet, Text, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Entypo from '@expo/vector-icons/Entypo';
 import Feather from '@expo/vector-icons/Feather';
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
@@ -58,7 +59,7 @@ export default function ShowEvent() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Main content container */}
       <View style={styles.mainContentContainer}>
         <View style={styles.headerContainer}>
@@ -119,7 +120,7 @@ export default function ShowEvent() {
           color: '#000'
         }}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#222b23",
     flex: 1,
     paddingHorizontal: 15,
-    paddingTop: 40,
+    paddingTop: 20,
     paddingBottom: 10,
   },
   eventContentContainer: {

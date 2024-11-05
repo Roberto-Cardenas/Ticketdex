@@ -1,5 +1,6 @@
 // Library imports
 import { View, StyleSheet, Text, TextInput } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 
@@ -104,7 +105,7 @@ export default function EditEvent() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
         <BackButton />
       </View>
@@ -138,7 +139,7 @@ export default function EditEvent() {
         </View>
         <Button label="Update Event" icon="check" onPress={handleCreateNewEvent}/>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#222b23",
     flex: 1,
     paddingHorizontal: 15,
-    paddingTop: 40,
+    paddingTop: 20,
     paddingBottom: 10,
   },
   headerContainer: {

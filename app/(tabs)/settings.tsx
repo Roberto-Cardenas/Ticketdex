@@ -1,6 +1,7 @@
 // Library imports
 import { View, StyleSheet, Switch, Text } from "react-native";
 import { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Component imports
 import Title from "@/components/Title";
@@ -36,7 +37,7 @@ export default function Settings() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Main content container */}
       <View style={styles.mainContentContainer}>
           <Title>SETTINGS</Title>
@@ -65,7 +66,7 @@ export default function Settings() {
             </View>
           </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#222b23",
     flex: 1,
     paddingHorizontal: 15,
-    paddingTop: 40,
+    paddingTop: 20,
     paddingBottom: 10,
   },
   mainContentContainer: {

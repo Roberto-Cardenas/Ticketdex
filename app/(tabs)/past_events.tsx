@@ -2,6 +2,7 @@
 import { View, StyleSheet, FlatList, Text } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { formatDate } from "@/imports/functions";
 
 // Component imports
@@ -21,7 +22,7 @@ export default function PastEvents() {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Main content container */}
       <View style={styles.mainContentContainer}>
         <View style={styles.eventsContainer}>
@@ -51,7 +52,7 @@ export default function PastEvents() {
           }
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#222b23",
     flex: 1,
     paddingHorizontal: 15,
-    paddingTop: 40,
+    paddingTop: 20,
     paddingBottom: 10,
   },
   mainContentContainer: {
