@@ -78,7 +78,7 @@ export function getEvent(eventID: number) {
 export function createEvent(newEvent: Event) {
   const newEventData = {
     name: newEvent.name,
-    datetime: newEvent.datetime.valueOf().toString(), //Fix me: Use different representation to store date in DB
+    datetime: newEvent.datetime.valueOf().toString(),
     locationName: newEvent.locationName,
     locationAddress: newEvent.locationAddress,
     ticketType: newEvent.ticketType,
@@ -117,7 +117,7 @@ export function deletePastEvents() {
 
     // If they have a ticket type of Image or File use the filesystem client to delete the files from the ticket folder
     pastEvents.forEach((event) => {
-      if (event.ticketType === 'image') {
+      if (event.ticketType === 'image' || event.ticketType === 'file') {
         deleteTicket(event.ticketURI);
       }
     });
@@ -131,8 +131,10 @@ export async function cleanupEvents() {
   const statement = db.select().from(eventsTable);
 
   statement.all().forEach(async (item) => {
-    if (!(await ticketExists(item.ticketURI))) {
-      deleteEvent(item.id);
+    if (item.ticketType === 'image' || item.ticketType === 'file') {
+      if (!(await ticketExists(item.ticketURI))) {
+        deleteEvent(item.id);
+      }
     }
   });
 }

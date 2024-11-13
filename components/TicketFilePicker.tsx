@@ -1,5 +1,5 @@
 import { StyleSheet, Pressable, Text } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 import { FileData } from '@/app/create_event';
@@ -10,11 +10,10 @@ type Props = {
   enabled: boolean;
 };
 
-export default function TicketImagePicker({ fileData, setFileData, enabled }: Props) {
+export default function TicketFilePicker({ fileData, setFileData, enabled }: Props) {
   const pickDocument = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1
+    let result = await DocumentPicker.getDocumentAsync({
+      type: 'application/pdf'
     });
 
     if (result.canceled) {
@@ -22,18 +21,18 @@ export default function TicketImagePicker({ fileData, setFileData, enabled }: Pr
     }
 
     setFileData({
-      name: result.assets[0].fileName ? result.assets[0].fileName : new Date().toTimeString(),
+      name: result.assets[0].name,
       uri: result.assets[0].uri,
-      type: 'image'
+      type: 'file'
     });
   };
 
   return (
       <Pressable disabled={!enabled} style={ enabled ? styles.sourcePanel : styles.sourcePanelDisabled } onPress={pickDocument}>
         <Text style={ enabled ? styles.sourcePanelText : styles.sourcePanelTextDisabled }>
-        { fileData.name.trim() === "" ? "Upload Screenshot" : (fileData.type === 'image' ? fileData.name : 'Upload Screenshot' ) }
+          { fileData.name.trim() === "" ? "Upload File" : (fileData.type === 'file' ? fileData.name : 'Upload File' ) }
         </Text>
-        <MaterialIcons name="screenshot" size={28} color={enabled ? '#fff' : '#B3CEB7'} />
+        <MaterialIcons name="upload-file" size={28} color={enabled ? '#fff' : '#B3CEB7'} />
       </Pressable>
   );
 }

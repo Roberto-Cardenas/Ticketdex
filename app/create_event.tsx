@@ -29,9 +29,10 @@ export type LocationData = {
 export type FileData = {
   name: string;
   uri: string;
+  type: string;
 };
 
-type Ticket = {
+export type Ticket = {
   type: string;
   uri: string;
 }
@@ -55,7 +56,8 @@ export default function CreateEvent() {
   });
   const [fileData, setFileData] = useState<FileData>({
     name: '',
-    uri: ''
+    uri: '',
+    type: ''
   });
 
   const handleCreateNewEvent = async () => {//FIX ME: Add more extensive form validation
@@ -73,8 +75,17 @@ export default function CreateEvent() {
       alert('Please upload a ticket for this event');
       return;
     }
-    
-    const ticketURI = await saveTicket(fileData.name, fileData.uri);
+
+    let ticketURI = "";
+    let ticketType = "";
+
+    if (fileData.type === 'image' || fileData.type === 'file') {
+      ticketURI = await saveTicket(fileData.name, fileData.uri);
+      ticketType = fileData.type;
+    } else {
+      ticketURI = 'url'; //FIXME
+      ticketType = 'url'; //FIXME
+    }
     
     const newEvent: Event = {
       id: 0,
@@ -82,9 +93,9 @@ export default function CreateEvent() {
       datetime: date,
       locationName: locationData.name,
       locationAddress: locationData.address,
-      ticketType: 'image',
+      ticketType: ticketType,
       ticketURI: ticketURI
-    };// FIXME: Correct this once more ticket uploading/linking options are added
+    };
 
     createEvent(newEvent);
     router.back();

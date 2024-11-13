@@ -10,6 +10,13 @@ const ensureDirectoryExists = async () => {
   }
 };
 
+const printFileNamesInFolder = async () => {
+  await ensureDirectoryExists();
+
+  const files = await FileSystem.readDirectoryAsync(ticketDirectory);
+  console.log(files);
+}
+
 export async function saveTicket(name: string, uri: string) {
   await ensureDirectoryExists();
   const fileName = new Date().getTime() + name;
@@ -22,6 +29,7 @@ export async function saveTicket(name: string, uri: string) {
 export async function deleteTicket(uri: string) {
   if (await ticketExists(uri)) {
     await FileSystem.deleteAsync(uri);
+    // printFileNamesInFolder(); For debugging
   }
 }
 

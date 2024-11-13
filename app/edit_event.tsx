@@ -17,6 +17,7 @@ import { Event, getEvent, updateEvent } from "@/models/Event";
 
 // Import filesystem API
 import { saveTicket, deleteTicket } from "@/filesystem/client";
+import { FileData } from "./create_event";
 
 
 // Type declarations and exports
@@ -25,17 +26,6 @@ export type LocationData = {
   name: string;
   address: string;
 };
-
-export type FileData = {
-  name: string;
-  uri: string;
-};
-
-// TODO: Implement different ticket types: Link, App, File
-// type Ticket = { 
-//   type: string;
-//   uri: string;
-// }
 
 export default function EditEvent() {
   //////////////
@@ -61,7 +51,8 @@ export default function EditEvent() {
   });
   const [fileData, setFileData] = useState<FileData>({
     name: fileName ? fileName : '',
-    uri: eventData.ticketURI
+    uri: eventData.ticketURI,
+    type: eventData.ticketType
   });
 
   const handleCreateNewEvent = async () => {//FIX ME: Add more extensive form validation
@@ -79,14 +70,21 @@ export default function EditEvent() {
       alert('Please upload a ticket for this event');
       return;
     }
-    
-    let ticketURI = '';
 
-    if (eventData.ticketURI === fileData.uri) {
-      ticketURI = eventData.ticketURI;
+    let ticketURI = "";
+    let ticketType = "";
+
+    if (fileData.type === 'image' || fileData.type === 'file') {
+      if (eventData.ticketURI === fileData.uri) {
+        ticketURI = eventData.ticketURI;
+      } else {
+        ticketURI = await saveTicket(fileData.name, fileData.uri);
+        deleteTicket(eventData.ticketURI);
+      }
+      ticketType = fileData.type;
     } else {
-      ticketURI = await saveTicket(fileData.name, fileData.uri);
-      deleteTicket(eventData.ticketURI);
+      ticketURI = 'url'; //FIXME
+      ticketType = 'url'; //FIXME
     }
     
     
@@ -96,9 +94,9 @@ export default function EditEvent() {
       datetime: date,
       locationName: locationData.name,
       locationAddress: locationData.address,
-      ticketType: 'image',
+      ticketType: ticketType,
       ticketURI: ticketURI
-    };// FIXME: Correct this once more ticket uploading/linking options are added
+    };
 
     await updateEvent(updatedEvent);
     router.back();

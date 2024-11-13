@@ -15,6 +15,7 @@ import Title from "@/components/Title";
 import BackButton from "@/components/BackButton";
 import IconButton from "@/components/IconButton";
 import Button from "@/components/Button";
+import PDFModalViewer from "@/components/PDFModalViewer";
 
 // Data layer imports
 import { getEvent, deleteEvent } from "@/models/Event";
@@ -36,7 +37,8 @@ export default function ShowEvent() {
 
 
   // Setup state
-  const [isTicketVisible, setIsTicketVisible] = useState(false);
+  const [isImageTicketVisible, setIsImageTicketVisible] = useState(false);
+  const [isPDFTicketVisible, setIsPDFTicketVisible] = useState(false);
   const [eventData, setEventData] = useState(getEvent(eventID));
   const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
 
@@ -48,7 +50,9 @@ export default function ShowEvent() {
 
   // Event handlers
   const handleDelete = async () => {
-    await deleteTicket(eventData.ticketURI);
+    if (eventData.ticketType === 'file' || eventData.ticketType == 'image') {
+      await deleteTicket(eventData.ticketURI);
+    }
     deleteEvent(eventData.id);
     router.back();
   };
@@ -58,17 +62,28 @@ export default function ShowEvent() {
     alert('Address copied to clipboard');
   };
 
+  const handleShowEventTicket = () => {
+    if (eventData.ticketType === 'image') {
+      setIsImageTicketVisible(true);
+    } else if (eventData.ticketType === 'file') {
+      setIsPDFTicketVisible(true);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Main content container */}
       <View style={styles.mainContentContainer}>
         <View style={styles.headerContainer}>
           <BackButton />
+          {/* Edit and delete buttons */}
           <View style={styles.iconButtonContainer}>
             <IconButton accessibilityLabel="Edit Event" icon="edit-square" onPress={() => { router.push(`/edit_event?id=${eventData.id}`) }} />
             <IconButton accessibilityLabel="Delete Event" icon="delete" onPress={() => {setIsDeleteDialogVisible(true)}}/>
           </View>
         </View>
+
+        {/* Event information */}
         <View style={styles.eventContentContainer}>
           <Title>{ eventData.name }</Title>
           <Text style={styles.text}>{ formatDate(eventData.datetime) }</Text>
@@ -82,17 +97,25 @@ export default function ShowEvent() {
             </Pressable>
           </View>
         </View>
+
+        {/* Show ticket button */}
         <View style={styles.buttonContainer}>
-          <Button label="Go to tickets" icon="ticket" onPress={() => {setIsTicketVisible(true)}} />
+          <Button label="Go to tickets" icon="ticket" onPress={handleShowEventTicket} />
         </View>
       </View>
-      {/* Show ticket modal */}
+      {/* Show image ticket modal */}
       <ImageView 
         images={[{uri: eventData.ticketURI}]}
         imageIndex={0}
-        visible={isTicketVisible}
-        onRequestClose={() => { setIsTicketVisible(false) }}
+        visible={isImageTicketVisible}
+        onRequestClose={() => { setIsImageTicketVisible(false) }}
         animationType="slide"
+      />
+      {/* PDF View */}
+      <PDFModalViewer 
+        uri={eventData.ticketURI}
+        visible={isPDFTicketVisible}
+        onClose={() => {setIsPDFTicketVisible(false)}}
       />
       {/* Delete dialogbox */}
       <ConfirmDialog
