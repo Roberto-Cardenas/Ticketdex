@@ -8,6 +8,7 @@ import { useState, useCallback } from "react";
 import { ConfirmDialog } from 'react-native-simple-dialogs';
 import * as Clipboard from 'expo-clipboard';
 import ImageView from 'react-native-image-viewing';
+import * as Linking from 'expo-linking';
 import { formatDate } from "@/imports/functions";
 
 // Component imports
@@ -67,6 +68,8 @@ export default function ShowEvent() {
       setIsImageTicketVisible(true);
     } else if (eventData.ticketType === 'file') {
       setIsPDFTicketVisible(true);
+    } else {
+      Linking.openURL(eventData.ticketURI);
     }
   };
 

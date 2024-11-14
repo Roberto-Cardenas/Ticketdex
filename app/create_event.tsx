@@ -1,5 +1,5 @@
 // Library imports
-import { View, StyleSheet, Text, TextInput } from "react-native";
+import { ScrollView, View, StyleSheet, Text, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -32,11 +32,6 @@ export type FileData = {
   type: string;
 };
 
-export type Ticket = {
-  type: string;
-  uri: string;
-}
-
 function defaultDate() {
   const date = new Date();
   date.setHours(22);
@@ -45,6 +40,10 @@ function defaultDate() {
 
   return date;
 }
+
+const externalTicketLinks = {
+  'ra-guide': 'https://residentadvisor.page.link/'
+};
 
 export default function CreateEvent() {
   const [eventName, setEventName] = useState<string>("");
@@ -59,6 +58,7 @@ export default function CreateEvent() {
     uri: '',
     type: ''
   });
+  const [selectedType, setSelectedType] = useState('file');
 
   const handleCreateNewEvent = async () => {//FIX ME: Add more extensive form validation
     if (eventName.trim() === '') {
@@ -71,20 +71,33 @@ export default function CreateEvent() {
       return;
     }
 
-    if (fileData.name.trim() === '' || fileData.uri.trim() === '') {
-      alert('Please upload a ticket for this event');
-      return;
+    if (selectedType === 'image' || selectedType === 'file') {
+      // This catches the case where the goes from an external link to a file and doesnt select a file
+      if (fileData.name.trim() === '' || fileData.uri.trim() === '') {
+        alert('Please upload a ticket for this event');
+        return;
+      }
+
+      // Case where we are going from one file type to the other and the user doesnt select a new file
+      if (fileData.type === 'image' || fileData.type === 'file') {
+        if (fileData.type !== selectedType) {
+          alert('Please upload a ticket for this event');
+          return;
+        }
+      }
     }
 
     let ticketURI = "";
-    let ticketType = "";
+    let ticketType = selectedType;
 
-    if (fileData.type === 'image' || fileData.type === 'file') {
+    // If new ticket is an image or file save it to the file system
+    if (selectedType === 'image' || selectedType === 'file') {
       ticketURI = await saveTicket(fileData.name, fileData.uri);
-      ticketType = fileData.type;
+    // Else just select the appropriate external link
     } else {
-      ticketURI = 'url'; //FIXME
-      ticketType = 'url'; //FIXME
+      if (selectedType in externalTicketLinks) {
+        ticketURI = externalTicketLinks[selectedType as keyof typeof externalTicketLinks];
+      }
     }
     
     const newEvent: Event = {
@@ -107,7 +120,12 @@ export default function CreateEvent() {
         <BackButton />
       </View>
       <Title>ADD NEW EVENT TICKET</Title>
-      <View style={styles.formContainer}>
+      <ScrollView 
+        contentContainerStyle={styles.formContainer}
+        alwaysBounceVertical={false}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps='handled'
+      >
         {/* Event name input */}
         <View style={styles.inputContainer}>
           <Text style={styles.text}>Event</Text>
@@ -132,10 +150,15 @@ export default function CreateEvent() {
         {/* Event ticket picker input */}
         <View style={styles.inputContainer}>
           <Text style={styles.text}>Ticket</Text>
-          <TicketSourcePicker fileData={fileData} setFileData={setFileData} />
+          <TicketSourcePicker 
+            fileData={fileData} 
+            setFileData={setFileData} 
+            selected={selectedType}
+            setSelected={setSelectedType}
+          />
         </View>
         <Button label="Add Event" icon="plus" onPress={handleCreateNewEvent}/>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -153,7 +176,8 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     marginTop: 16,
-    gap: 16
+    gap: 16,
+    paddingBottom: 20
   },
   inputContainer: {
     gap: 8
