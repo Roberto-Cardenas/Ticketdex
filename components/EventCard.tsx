@@ -2,7 +2,6 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 
 type Props = {
-  eventID: number;
   name: string;
   location: string;
   dateTime: string;
@@ -17,7 +16,7 @@ function processLocationText(locationName: string) {
   }
 }
 
-export default function EventCard({ eventID, name, location, dateTime, onPress }: Props) {
+export default function EventCard({ name, location, dateTime, onPress }: Props) {
   return (
     <Pressable style={styles.container} onPress={onPress}>
       <Text style={[styles.text, styles.title]}>{name}</Text>

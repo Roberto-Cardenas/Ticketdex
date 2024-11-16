@@ -16,7 +16,6 @@ export default function EventList({ data, style }: Props) {
       renderItem={({ item }) => (
         <EventCard 
           key={item.id}
-          eventID={item.id} 
           name={item.name}
           dateTime={formatDate(item.datetime)}
           location={item.locationName}
