@@ -9,6 +9,14 @@ type Props = {
   onPress: () => void;
 };
 
+function processLocationText(locationName: string) {
+  if (locationName.length > 20) {
+    return `${locationName.substring(0, 20)}...`;
+  } else {
+    return locationName;
+  }
+}
+
 export default function EventCard({ eventID, name, location, dateTime, onPress }: Props) {
   return (
     <Pressable style={styles.container} onPress={onPress}>
@@ -16,7 +24,7 @@ export default function EventCard({ eventID, name, location, dateTime, onPress }
       <View style={styles.subcontainer}>
         <View style={styles.iconTextContainer}>
           <Entypo name="location-pin" size={16} color="#63de75" />
-          <Text style={styles.text}>{location}</Text>
+          <Text style={styles.text}>{processLocationText(location)}</Text>
         </View>
         <Text style={styles.text}>{dateTime}</Text>
       </View>

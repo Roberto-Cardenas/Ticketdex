@@ -1,11 +1,11 @@
 // Library imports
-import { View, StyleSheet, Switch, Text } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Component imports
 import Title from "@/components/Title";
-import DeleteIntervalPicker from "@/components/DeleteIntervalPicker";
+import AutoDeleteSettingPanel from "@/components/AutodeleteSettingPanel";
 
 // Model imports
 import { Config, getConfig, setConfig } from "@/models/Config";
@@ -41,30 +41,12 @@ export default function Settings() {
       {/* Main content container */}
       <View style={styles.mainContentContainer}>
           <Title>SETTINGS</Title>
-          <View style={styles.optionPanel}>
-            <View style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-              <View>
-                <Text style={styles.optionHeaderText} >Delete Past Event Tickets</Text>
-                <Text style={styles.optionSubHeaderText} >Delete past event tickets automatically after a set amount of time</Text>
-              </View>
-              <Switch
-              value={autoDeleteEvents}
-              onValueChange={handleAutoDeleteChange}
-              trackColor={{false: '#B3CEB7', true: '#63DE75'}}
-              ios_backgroundColor='#B3CEB7'
-            />
-            </View>
-            <View>
-              <DeleteIntervalPicker 
-                selectedInterval={selectedDeleteInterval} 
-                onSelect={handleIntervalSelect}
-                enabled={autoDeleteEvents}
-              />
-            </View>
-          </View>
+          <AutoDeleteSettingPanel 
+            switchValue={autoDeleteEvents}
+            onSwitchValueChange={handleAutoDeleteChange}
+            selectedDeleteInterval={selectedDeleteInterval}
+            handleIntervalSelect={handleIntervalSelect}
+          />
       </View>
     </SafeAreaView>
   );
@@ -82,18 +64,4 @@ const styles = StyleSheet.create({
     flex: 1,
     marginVertical: 10
   },
-  optionPanel: {
-    marginTop: 16
-  },
-  optionHeaderText: {
-    color: '#fff',
-    fontFamily: 'Roboto-Medium',
-    fontSize: 18
-  },
-  optionSubHeaderText: {
-    color: '#C7DCC9',
-    fontFamily: 'Roboto-Regular',
-    width: 250,
-    marginTop: 8
-  }
 });

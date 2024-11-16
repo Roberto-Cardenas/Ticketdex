@@ -1,5 +1,5 @@
 // Library imports
-import { ScrollView, View, StyleSheet, Text, TextInput } from "react-native";
+import { ScrollView, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
@@ -8,28 +8,17 @@ import { useState } from "react";
 import Title from "@/components/Title";
 import BackButton from "@/components/BackButton";
 import Button from "@/components/Button";
-import DateTimeSelector from "@/components/DateTimeSelector";
-import LocationInput from "@/components/LocationInput";
-import TicketSourcePicker from "@/components/TicketSourcePicker";
+import EventForm from "@/components/EventForm";
 
 // Import Data layer
 import { Event, getEvent, updateEvent } from "@/models/Event";
 
 // Import filesystem API
 import { saveTicket, deleteTicket } from "@/filesystem/client";
-import { FileData } from "./create_event";
+import { FileData, LocationData } from "@/imports/types";
 
-
-// Type declarations and exports
-export type LocationData = {
-  googlePlaceID: string;
-  name: string;
-  address: string;
-};
-
-const externalTicketLinks = {
-  'ra-guide': 'https://residentadvisor.page.link/'
-};
+// Import constants
+import { externalTicketLinks } from "@/constants/ExternalTicketLinks";
 
 export default function EditEvent() {
   //////////////
@@ -60,64 +49,86 @@ export default function EditEvent() {
   });
   const [selectedType, setSelectedType] = useState(eventData.ticketType);
 
-  const handleCreateNewEvent = async () => {//FIX ME: Add more extensive form validation
+  const validateTypedInput = () => {
     if (eventName.trim() === '') {
       alert('Please enter an event name');
-      return;
+      return false;
     }
 
     if (locationData.name.trim() === '') {
       alert('Please enter an event location');
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateTicketFileInput = () => {
+    // Check if we should expect the fileData object to be populated with data
+    if (selectedType === 'image' || selectedType === 'file') {
+      // Check if fileData is populated, aka the user selected an image or file
+      if (fileData.uri.trim() === '') {
+        alert('Please upload a ticket for this event!');
+        return false;
+      }
+
+      // So far we have determined that:
+      // SelectedTicketType is either image or file
+      // And that FileData is populated
+      // Threfore we can check if the selectedType is the same as the populated fileData ticket type
+      if (selectedType !== fileData.type ) {
+        if (selectedType === 'image') {
+          alert('Please upload a ticket screenshot for this event!');
+          return false;
+        } else {
+          alert('Please upload a ticket PDF for this event!');
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
+  const handleTicketURI = async () => {
+    let ticketURI = '';
+
+    // If new ticket is an image or file save it to the file system
+    if (selectedType === 'image' || selectedType === 'file') {
+      // Check if it is the same file as before editing the event before saving
+      // eventData: previous event data
+      // fileData: current event data to be saved
+      if (eventData.ticketURI === fileData.uri) { 
+        // File is the same so no changes in the file system needed
+        ticketURI = eventData.ticketURI;
+      } else {
+        // New file is being uploaded so save it to the filesystem and delete the previous event ticket file if it exists
+        ticketURI = await saveTicket(fileData.name, fileData.uri);
+
+        // If previous ticket was an image or file delete from file system
+        if (eventData.ticketType === 'file' || eventData.ticketType === 'file') {
+          deleteTicket(eventData.ticketURI); 
+        }
+      }
+    // Else just select the appropriate external link
+    } else {
+      if (selectedType in externalTicketLinks) {
+        ticketURI = externalTicketLinks[selectedType as keyof typeof externalTicketLinks].url;
+
+        // If previous ticket was an image or file delete from file system
+        if (eventData.ticketType === 'file' || eventData.ticketType === 'file') {
+          deleteTicket(eventData.ticketURI); 
+        }
+      }
+    }
+
+    return ticketURI;
+  };
+
+  const handleUpdateEvent = async () => {
+    if (!validateTypedInput() || !validateTicketFileInput()) {
       return;
     }
-
-    if (selectedType === 'image' || selectedType === 'file') {
-      // This catches the case where the goes from an external link to a file and doesnt select a file
-      if (fileData.name.trim() === '' || fileData.uri.trim() === '') {
-        alert('Please upload a ticket for this event');
-        return;
-      }
-
-      // Case where the user selects one ticket type, uploads a file then selects a different ticket type and doesnt upload a file
-      if (fileData.type === 'image' || fileData.type === 'file') {
-        if (fileData.type !== selectedType) {
-          alert('Please upload a ticket for this event');
-          return;
-        }
-      }
-    }
-    
-    let ticketURI = "";
-    let ticketType = selectedType;
-
-    // If the new ticket type is an image or a file
-    if (selectedType === 'image' || selectedType === 'file') {
-
-      // Check if its the same file from before
-      // case where the user chose a different file type but 
-      // didnt upload a new file has already been ruled out
-      if (eventData.ticketURI === fileData.uri) {
-        ticketURI = eventData.ticketURI;
-      // If a new file, save the file and delete the old one if necessary
-      } else {
-        ticketURI = await saveTicket(fileData.name, fileData.uri);
-        
-        if (eventData.ticketType === 'file' || eventData.ticketType === 'image') {
-          deleteTicket(eventData.ticketURI);
-        }
-      }
-    // If the new ticket type is an external link
-    } else {
-      // Get the external link and delete the old ticket file from the file system if necessary
-      if (selectedType in externalTicketLinks) {
-        ticketURI = externalTicketLinks[selectedType as keyof typeof externalTicketLinks];
-
-        if (eventData.ticketType === 'file' || eventData.ticketType === 'image') {
-          deleteTicket(eventData.ticketURI);
-        }
-      }
-    }
-    
     
     const updatedEvent: Event = {
       id: eventID,
@@ -125,8 +136,8 @@ export default function EditEvent() {
       datetime: date,
       locationName: locationData.name,
       locationAddress: locationData.address,
-      ticketType: ticketType,
-      ticketURI: ticketURI
+      ticketType: selectedType,
+      ticketURI: await handleTicketURI()
     };
 
     await updateEvent(updatedEvent);
@@ -138,45 +149,26 @@ export default function EditEvent() {
       <View style={styles.headerContainer}>
         <BackButton />
       </View>
-      <Title>EDIT EVENT TICKET</Title>
       <ScrollView 
         contentContainerStyle={styles.formContainer}
         alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps='handled'
       >
-        {/* Event name input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.text}>Event</Text>
-          <TextInput 
-            style={styles.inputBox} 
-            value={eventName} 
-            onChangeText={setEventName}
-            placeholder="Enter event name"
-            placeholderTextColor="#677567"
-          />
-        </View>
-        {/* Event date/time input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.text}>Date and Time</Text>
-          <DateTimeSelector date={date} setDate={setDate} />
-        </View>
-        {/* Event location picker input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.text}>Location</Text>
-          <LocationInput locationData={locationData} setLocationData={setLocationData} />
-        </View>
-        {/* Event ticket picker input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.text}>Ticket</Text>
-          <TicketSourcePicker 
-            fileData={fileData} 
-            setFileData={setFileData} 
-            selected={selectedType} 
-            setSelected={setSelectedType}
-          />
-        </View>
-        <Button label="Update Event" icon="check" onPress={handleCreateNewEvent}/>
+        <Title>EDIT EVENT TICKET</Title>
+        <EventForm 
+          eventName={eventName}
+          setEventName={setEventName}
+          date={date}
+          setDate={setDate}
+          locationData={locationData}
+          setLocationData={setLocationData}
+          fileData={fileData}
+          setFileData={setFileData}
+          selectedTicketType={selectedType}
+          setSelectedTicketType={setSelectedType}
+        />
+        <Button label="Update Event" icon="check" onPress={handleUpdateEvent}/>
       </ScrollView>
     </SafeAreaView>
   );

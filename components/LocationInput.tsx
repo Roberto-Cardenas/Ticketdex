@@ -3,8 +3,7 @@ import { useState } from "react";
 
 import BackButton from "./BackButton";
 import Title from "./Title";
-
-import { LocationData } from "@/app/create_event";
+import { LocationData } from "@/imports/types";
 
 // //////////////
 // TODO

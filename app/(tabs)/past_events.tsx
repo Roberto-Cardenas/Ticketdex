@@ -3,11 +3,10 @@ import { View, StyleSheet, FlatList, Text } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { formatDate } from "@/imports/functions";
 
 // Component imports
 import Title from "@/components/Title";
-import EventCard from "@/components/EventCard";
+import EventList from "@/components/EventList";
 
 // Model imports
 import { Event, getPastEvents } from "@/models/Event";
@@ -29,23 +28,7 @@ export default function PastEvents() {
           <Title>PAST EVENT TICKETS</Title>
           { 
             pastEvents.length > 0 ? (
-              <>
-                <FlatList 
-                  data={pastEvents}
-                  renderItem={({ item }) => (
-                    <EventCard 
-                      key={item.id}
-                      eventID={item.id} 
-                      name={item.name}
-                      dateTime={formatDate(item.datetime)}
-                      location={item.locationName}
-                      onPress={() => { router.push(`/show_event?id=${item.id}`) }}
-                    />
-                  )}
-                  alwaysBounceVertical={false}
-                  showsVerticalScrollIndicator={false}
-                />
-              </>
+              <EventList data={pastEvents} />
             ) : (
               <Text style={styles.noEventsText}>No past events to show! Go out more...</Text>
             )

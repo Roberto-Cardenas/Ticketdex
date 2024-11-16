@@ -3,12 +3,11 @@ import { View, StyleSheet, FlatList, Text } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { formatDate } from "@/imports/functions";
 
 // Component imports
 import Title from "@/components/Title";
-import EventCard from "@/components/EventCard";
 import CircleButton from "@/components/CircleButton";
+import EventList from "@/components/EventList";
 
 // Model imports
 import { deletePastEvents, Event, getUpcomingEvents } from "@/models/Event";
@@ -31,22 +30,7 @@ export default function Index() {
           <Title>UPCOMING EVENT TICKETS</Title>
           { 
             events.length > 0 ? (
-              <FlatList 
-                data={events}
-                renderItem={({ item }) => (
-                  <EventCard 
-                    key={item.id}
-                    eventID={item.id} 
-                    name={item.name}
-                    dateTime={formatDate(item.datetime)}
-                    location={item.locationName}
-                    onPress={() => { router.push(`/show_event?id=${item.id}`) }}
-                  />
-                )}
-                alwaysBounceVertical={false}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.eventsFlatlist}
-              />
+              <EventList data={events} style={styles.eventsFlatlist} />
             ) : (
               <Text style={styles.noEventsText}>No upcoming events, press the add button below to add more!</Text>
             )

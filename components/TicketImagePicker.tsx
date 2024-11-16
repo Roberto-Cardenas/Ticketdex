@@ -1,8 +1,7 @@
 import { StyleSheet, Pressable, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-
-import { FileData } from '@/app/create_event';
+import { FileData } from '@/imports/types';
 
 type Props = {
   fileData: FileData;

@@ -43,7 +43,7 @@ export default function DeleteIntervalPicker ({ selectedInterval, enabled, onSel
             <View style={styles.pickerContainer} >
               <Picker
                   selectedValue={selectedOptionIndex}
-                  onValueChange={(value, index) => {
+                  onValueChange={(value) => {
                     setSelectedOptionIndex(value);
                   }}
                 >

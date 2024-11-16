@@ -1,8 +1,7 @@
 import { StyleSheet, Pressable, Text } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-
-import { FileData } from '@/app/create_event';
+import { FileData } from '@/imports/types';
 
 type Props = {
   fileData: FileData;
@@ -30,7 +29,7 @@ export default function TicketFilePicker({ fileData, setFileData, enabled }: Pro
   return (
       <Pressable disabled={!enabled} style={ enabled ? styles.sourcePanel : styles.sourcePanelDisabled } onPress={pickDocument}>
         <Text style={ enabled ? styles.sourcePanelText : styles.sourcePanelTextDisabled }>
-          { fileData.name.trim() === "" ? "Upload File" : (fileData.type === 'file' ? fileData.name : 'Upload File' ) }
+          { fileData.name.trim() === "" ? "Upload PDF" : (fileData.type === 'file' ? fileData.name : 'Upload PDF' ) }
         </Text>
         <MaterialIcons name="upload-file" size={28} color={enabled ? '#fff' : '#B3CEB7'} />
       </Pressable>

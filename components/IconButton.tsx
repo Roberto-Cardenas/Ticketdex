@@ -1,5 +1,4 @@
 import { StyleSheet, Pressable } from "react-native";
-import { router } from "expo-router";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 type Props = {
